@@ -998,12 +998,6 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 }
 
     
-/* ---- PDF READER EXTRA ---- */
-@keyframes spin{to{transform:rotate(360deg);}}
-#page-reader.active{display:flex !important;}
-#page-reader{display:none !important;}
-#page-reader.open{display:flex !important;}
-
 /* ---- MODAL IMPROVEMENTS ---- */
 #settingsModal .modal, #addBookModal .modal, #proModal .modal {
     transition:transform .4s cubic-bezier(.175,.885,.32,1.275);
@@ -1130,7 +1124,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 }
 
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
 </head>
 <body>
 <div class="grid-bg"></div>
@@ -1627,41 +1621,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
         </div>
     </div>
 
-    <!-- PAGE: READER -->
-    <div class="page" id="page-reader" style="background:var(--bg); position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:5000; overflow:hidden; display:none; flex-direction:column;">
-        <!-- Reader Top Bar -->
-        <div style="position:relative; background:rgba(18,18,20,.95); backdrop-filter:blur(20px); padding:0 20px; height:62px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); flex-shrink:0; z-index:10;">
-            <button onclick="closeReader()" style="background:rgba(255,255,255,.07); border:1px solid var(--border); color:var(--text); padding:9px 18px; border-radius:var(--radius-pill); cursor:pointer; font-weight:700; font-size:.9rem; display:flex; align-items:center; gap:8px; transition:.2s;" onmouseover="this.style.background='rgba(255,255,255,.14)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">
-                <svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Chiqish
-            </button>
-            <div id="readerTitle" style="font-weight:800; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:40%; color:var(--text);">Kitob Nomi</div>
-            <div style="display:flex; gap:8px; align-items:center;">
-                <button onclick="zoomOut()" title="Kichraytirish" style="background:rgba(255,255,255,.07); border:1px solid var(--border); color:var(--text); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:1.1rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:.2s;">&#x2212;</button>
-                <span id="pageCount" style="font-size:.88rem; font-weight:700; color:var(--muted); min-width:60px; text-align:center;">1 / ?</span>
-                <button onclick="zoomIn()" title="Kattalashtirish" style="background:rgba(255,255,255,.07); border:1px solid var(--border); color:var(--text); width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:1.1rem; font-weight:700; display:flex; align-items:center; justify-content:center; transition:.2s;">&#x2B;</button>
-            </div>
-        </div>
-        
-        <!-- PDF Content Area -->
-        <div id="pdfContainer" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; align-items:center; padding:30px 20px; gap:20px; background:var(--bg);">
-            <!-- Loading Indicator -->
-            <div id="pdfLoading" style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:80px 20px; color:var(--muted);">
-                <div style="width:52px; height:52px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;"></div>
-                <div style="font-weight:700; font-size:1rem;">PDF yuklanmoqda...</div>
-            </div>
-            <canvas id="pdfCanvas" style="max-width:100%; box-shadow:0 20px 60px rgba(0,0,0,.5); border-radius:12px; display:none;"></canvas>
-            
-            <!-- Navigation -->
-            <div id="pdfNav" style="display:none; flex; gap:16px; margin:10px 0 40px; align-items:center;">
-                <button onclick="prevPage()" id="btnPrev" class="btn-ghost" style="display:flex; align-items:center; gap:8px; padding:11px 22px;">
-                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Oldingi
-                </button>
-                <span id="pageCount2" style="font-weight:800; color:var(--blue); font-size:1rem; padding:0 10px;"></span>
-                <button onclick="nextPage()" id="btnNext" class="btn-primary" style="display:flex; align-items:center; gap:8px; padding:11px 22px;">
-                    Keyingi <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-                </button>
-            </div>
-        </div>
+    
     </div>
 
 <div class="page" id="page-notifications">
@@ -1777,19 +1737,18 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
                 <span class="star" onclick="setModalRating(5)">&#x2605;</span>
             </div>
 
-            <div style="background:rgba(0,136,204,.08); border:1px solid rgba(0,136,204,.2); border-radius:14px; padding:10px 14px; margin-bottom:14px; font-size:.82rem; color:var(--text); display:flex; align-items:center; gap:8px;">
-                <span style="font-size:1.2rem;">✈️</span>
-                <span>Kitoblar Telegram kanalimizda bepul yuklab olish uchun joylashtirilgan.</span>
+            <div style="background:rgba(0,136,204,.08); border:1px solid rgba(0,136,204,.2); border-radius:16px; padding:12px 16px; margin-bottom:16px; font-size:.85rem; color:var(--text); display:flex; align-items:center; gap:10px;">
+                <span style="font-size:1.4rem;">✈️</span>
+                <span>Barcha elektron va audio kitoblar Telegram kanalimizda bepul taqdim etilgan.</span>
             </div>
-            <div class="modal-actions" style="display:flex; flex-direction:column; gap:10px;">
-                <a href="https://t.me/kutubxona_kanal" id="modalTgLink" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#0088cc,#0066aa); justify-content:center; text-decoration:none; padding:14px; font-weight:900; font-size:1rem; border-radius:16px; box-shadow:0 8px 25px rgba(0,136,204,.35);">
+            <div class="modal-actions" style="display:flex; flex-direction:column; gap:12px;">
+                <a href="https://t.me/kutubxona_kanal" id="modalTgLink" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#0088cc,#0066aa); justify-content:center; text-decoration:none; padding:15px; font-weight:900; font-size:1rem; border-radius:18px; box-shadow:0 8px 25px rgba(0,136,204,.35);">
                     <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     Telegramda O'qish va Yuklash
                 </a>
-                <button class="btn-ghost" onclick="readOnline()" style="justify-content:center; font-size:.88rem;">📖 Saytda Ko'rish (Namuna)</button>
                 <div style="display:flex; gap:10px;">
-                    <button class="btn-ghost" onclick="addFavorite()" style="flex:1;">❤️ Sevimli</button>
-                    <button class="btn-ghost" onclick="addReadLater()" style="flex:1;">📌 Keyinroq</button>
+                    <button class="btn-ghost" onclick="addFavorite()" style="flex:1; padding:12px;">❤️ Sevimli</button>
+                    <button class="btn-ghost" onclick="addReadLater()" style="flex:1; padding:12px;">📌 Keyinroq</button>
                 </div>
             </div>
 
@@ -2232,168 +2191,11 @@ function openBookModal(id) {
 function closeBookModal() { document.getElementById('bookModal').classList.remove('open'); }
 function setModalRating(r) { document.querySelectorAll('.modal-stars .star').forEach((s,i) => s.classList.toggle('active', i < r)); showToast(`<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> ${r} yulduz berildi!`); }
 
-/* PDF READER LOGIC */
-let pdfDoc = null;
-let pageNum = 1;
-let pageRendering = false;
-let pageNumPending = null;
-let scale = 1.0;
-let pdfCanvasObj = null;
-let pdfCtxObj = null;
-
-function renderPage(num) {
-    pageRendering = true;
-    pdfDoc.getPage(num).then(function(page) {
-        if(!pdfCanvasObj) {
-            pdfCanvasObj = document.getElementById('pdfCanvas');
-            pdfCtxObj = pdfCanvasObj.getContext('2d');
-        }
-        
-        // Adjust scale based on screen width if on mobile
-        let currentScale = scale;
-        if(window.innerWidth < 600 && scale === 1.0) {
-            currentScale = (window.innerWidth - 40) / page.getViewport({scale: 1.0}).width;
-        }
-
-        var viewport = page.getViewport({scale: currentScale});
-        pdfCanvasObj.height = viewport.height;
-        pdfCanvasObj.width = viewport.width;
-
-        var renderContext = {
-            canvasContext: pdfCtxObj,
-            viewport: viewport
-        };
-        var renderTask = page.render(renderContext);
-
-        renderTask.promise.then(function() {
-            pageRendering = false;
-            if (pageNumPending !== null) {
-                renderPage(pageNumPending);
-                pageNumPending = null;
-            }
-        });
-    });
-
-    document.getElementById('pageCount').textContent = num + ' / ' + pdfDoc.numPages;
-}
-
-function queueRenderPage(num) {
-    if (pageRendering) {
-        pageNumPending = num;
-    } else {
-        renderPage(num);
-    }
-}
-
-function prevPage() {
-    if (pageNum <= 1) return;
-    pageNum--;
-    queueRenderPage(pageNum);
-}
-
-function nextPage() {
-    if (pageNum >= pdfDoc.numPages) return;
-    pageNum++;
-    queueRenderPage(pageNum);
-}
-
-function zoomIn() {
-    scale += 0.2;
-    queueRenderPage(pageNum);
-}
-
-function zoomOut() {
-    if(scale <= 0.4) return;
-    scale -= 0.2;
-    queueRenderPage(pageNum);
-}
-
-function closeReader() {
-    document.getElementById('page-reader').style.display = 'none';
-    // Go back to where they were, or just hide reader to reveal underlying page
-}
-
+/* TELEGRAM READ LINK */
 function readOnline() {
     if(!activeBook) return;
-
-    // Check if user is logged in
-    const currentUser = localStorage.getItem('user') || localStorage.getItem('token');
-    if(!currentUser) {
-        showToast("Kitob o'qish uchun avval tizimga kirishingiz kerak!");
-        setTimeout(() => { window.location.href = 'login.html'; }, 1200);
-        return;
-    }
-    
-    // PDF URL - use sample fallback if missing
-    let url = activeBook.pdfUrl || "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
-    
-    closeBookModal();
-    
-    // Show reader with loading state
-    const readerEl = document.getElementById('page-reader');
-    readerEl.style.display = 'flex';
-    readerEl.style.flexDirection = 'column';
-    document.getElementById('readerTitle').textContent = activeBook.title;
-    
-    const loadingEl = document.getElementById('pdfLoading');
-    const canvasEl = document.getElementById('pdfCanvas');
-    const navEl = document.getElementById('pdfNav');
-    if(loadingEl) {
-        loadingEl.style.display = 'flex';
-        loadingEl.innerHTML = '<div style="width:52px; height:52px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;"></div><div style="font-weight:700; font-size:1rem;">PDF yuklanmoqda...</div>';
-    }
-    if(canvasEl) canvasEl.style.display = 'none';
-    if(navEl) navEl.style.display = 'none';
-    
-    scale = 1.0;
-    pageNum = 1;
-    document.getElementById('pageCount').textContent = "...";
-    
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    
-    async function startPdfLoad() {
-        let pdfSource = url;
-        if(activeBook.pdfKey) {
-            const dbData = await getPdfFromDB(activeBook.pdfKey);
-            if(dbData) pdfSource = dbData;
-        }
-        tryLoad(pdfSource);
-    }
-
-    function tryLoad(pdfUrlToLoad, isFallback = false) {
-        pdfjsLib.getDocument(pdfUrlToLoad).promise.then(function(pdfDoc_) {
-            pdfDoc = pdfDoc_;
-            renderPage(pageNum).then(() => {
-                if(loadingEl) loadingEl.style.display = 'none';
-                if(canvasEl) canvasEl.style.display = 'block';
-                if(navEl) navEl.style.display = 'flex';
-                if(isFallback) {
-                    showToast("Namuna PDF ko'rsatilmoqda.");
-                }
-            });
-        }).catch(err => {
-            if(!isFallback && typeof pdfUrlToLoad === 'string' && pdfUrlToLoad !== "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf") {
-                console.log("CORS/Fetch error, trying sample fallback...");
-                tryLoad("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf", true);
-            } else {
-                if(loadingEl) {
-                    loadingEl.style.display = 'flex';
-                    loadingEl.innerHTML = `
-                        <div style="text-align:center; padding:20px; max-width:420px; background:var(--surface2); border-radius:20px; border:1px solid var(--border);">
-                            <div style="font-size:2.5rem; margin-bottom:10px;">⚠️</div>
-                            <h3 style="margin-bottom:8px; font-weight:800;">PDF Yuklashda Cheklov</h3>
-                            <p style="font-size:.88rem; color:var(--muted); margin-bottom:18px; line-height:1.5;">Ushbu PDF havolasi brauzer xavfsizligi (CORS) tufayli to'g'ridan-to'g'ri ochilmadi. Quyidagi tugmalar orqali ko'rishingiz mumkin:</p>
-                            <div style="display:flex; flex-direction:column; gap:10px;">
-                                <a href="${pdfUrlToLoad}" target="_blank" class="btn-primary" style="justify-content:center; text-decoration:none;">📄 Faylni Yangi Oynada Ochish</a>
-                                <a href="${activeBook.tgUrl || 'https://t.me/kutubxona_bot'}" target="_blank" class="btn-ghost" style="justify-content:center; text-decoration:none; background:#0088cc; color:#fff;">✈️ Telegramda O'qish</a>
-                            </div>
-                        </div>`;
-                }
-            }
-        });
-    }
-
-    startPdfLoad();
+    const tgUrl = activeBook.tgUrl || 'https://t.me/kutubxona_kanal';
+    window.open(tgUrl, '_blank');
 }
 
 function addFavorite() {
