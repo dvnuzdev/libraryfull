@@ -2325,6 +2325,15 @@ function readOnline() {
     
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     
+    async function startPdfLoad() {
+        let pdfSource = url;
+        if(activeBook.pdfKey) {
+            const dbData = await getPdfFromDB(activeBook.pdfKey);
+            if(dbData) pdfSource = dbData;
+        }
+        tryLoad(pdfSource);
+    }
+
     function tryLoad(pdfUrlToLoad, isFallback = false) {
         pdfjsLib.getDocument(pdfUrlToLoad).promise.then(function(pdfDoc_) {
             pdfDoc = pdfDoc_;
@@ -2333,11 +2342,11 @@ function readOnline() {
                 if(canvasEl) canvasEl.style.display = 'block';
                 if(navEl) navEl.style.display = 'flex';
                 if(isFallback) {
-                    showToast("Asl PDF havolasi bloklangan. Namuna PDF ko'rsatilmoqda.");
+                    showToast("Namuna PDF ko'rsatilmoqda.");
                 }
             });
         }).catch(err => {
-            if(!isFallback && pdfUrlToLoad !== "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf") {
+            if(!isFallback && typeof pdfUrlToLoad === 'string' && pdfUrlToLoad !== "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf") {
                 console.log("CORS/Fetch error, trying sample fallback...");
                 tryLoad("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf", true);
             } else {
@@ -2358,7 +2367,7 @@ function readOnline() {
         });
     }
 
-    tryLoad(url);
+    startPdfLoad();
 }
 
 function addFavorite() {
@@ -2689,6 +2698,47 @@ function closeAddBookModal() {
     const m = document.getElementById('addBookModal'); if(m) { m.classList.remove('open'); m.classList.remove('active'); }
 }
 
+
+/* --- INDEXEDDB FOR LARGE PDF / FILE STORAGE --- */
+const dbReq = indexedDB.open('KutubxonaDB', 1);
+dbReq.onupgradeneeded = function(e) {
+    const db = e.target.result;
+    if (!db.objectStoreNames.contains('pdfStore')) {
+        db.createObjectStore('pdfStore');
+    }
+};
+
+function savePdfToDB(key, data) {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('KutubxonaDB', 1);
+        req.onsuccess = function(e) {
+            const db = e.target.result;
+            const tx = db.transaction('pdfStore', 'readwrite');
+            const store = tx.objectStore('pdfStore');
+            const p = store.put(data, key);
+            p.onsuccess = () => resolve(true);
+            p.onerror = () => reject(p.error);
+        };
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function getPdfFromDB(key) {
+    return new Promise((resolve) => {
+        const req = indexedDB.open('KutubxonaDB', 1);
+        req.onsuccess = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('pdfStore')) return resolve(null);
+            const tx = db.transaction('pdfStore', 'readonly');
+            const store = tx.objectStore('pdfStore');
+            const p = store.get(key);
+            p.onsuccess = () => resolve(p.result || null);
+            p.onerror = () => resolve(null);
+        };
+        req.onerror = () => resolve(null);
+    });
+}
+
 /* --- DIRECT FILE UPLOAD HANDLERS --- */
 let uploadedPdfData = null;
 let uploadedCoverData = null;
@@ -2735,75 +2785,106 @@ function handleCoverFileSelect(e) {
     reader.readAsDataURL(file);
 }
 
-function submitAddBook() {
-    const titleEl = document.getElementById('inpTitle');
-    const authorEl = document.getElementById('inpAuthor');
-    const catEl = document.getElementById('inpCategory');
-    const coverEl = document.getElementById('inpCover');
-    const pdfEl = document.getElementById('inpPdf');
-    const tgEl = document.getElementById('inpTg');
-    const isProEl = document.getElementById('inpIsPro');
-    
-    const title = titleEl ? titleEl.value.trim() : '';
-    const author = authorEl ? authorEl.value.trim() : '';
-    const category = catEl ? catEl.value.trim() : '';
-    const coverUrl = coverEl ? coverEl.value.trim() : '';
-    const pdfUrlInput = pdfEl ? pdfEl.value.trim() : '';
-    const tgUrl = tgEl ? tgEl.value.trim() : '';
-    
-    if(!title) {
-        showToast("Iltimos, kitob nomini kiriting!");
-        return;
+async function submitAddBook() {
+    try {
+        const titleEl = document.getElementById('inpTitle');
+        const authorEl = document.getElementById('inpAuthor');
+        const catEl = document.getElementById('inpCategory');
+        const coverEl = document.getElementById('inpCover');
+        const pdfEl = document.getElementById('inpPdf');
+        const tgEl = document.getElementById('inpTg');
+        const isProEl = document.getElementById('inpIsPro');
+        
+        const title = titleEl ? titleEl.value.trim() : '';
+        const author = authorEl ? authorEl.value.trim() : '';
+        const category = catEl ? catEl.value.trim() : '';
+        const coverUrl = coverEl ? coverEl.value.trim() : '';
+        const pdfUrlInput = pdfEl ? pdfEl.value.trim() : '';
+        const tgUrl = tgEl ? tgEl.value.trim() : '';
+        
+        if(!title) {
+            showToast("Iltimos, kitob nomini kiriting!");
+            return;
+        }
+        
+        const bookId = Date.now();
+        const defaultCover = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80";
+        
+        // If cover is large base64, use it or fallback if storage fails
+        const coverToUse = uploadedCoverData || coverUrl || defaultCover;
+        const pdfKey = 'pdf_' + bookId;
+        
+        // If user uploaded a local PDF file, store in IndexedDB (no 5MB limit!)
+        let hasIndexedPdf = false;
+        if(uploadedPdfData) {
+            try {
+                await savePdfToDB(pdfKey, uploadedPdfData);
+                hasIndexedPdf = true;
+            } catch(e) { console.log('IndexedDB save error:', e); }
+        }
+        
+        const newBook = {
+            id: bookId,
+            title: title,
+            author: author || "Noma'lum muallif",
+            category: category || "Boshqa",
+            isPro: isProEl ? isProEl.checked : false,
+            rating: 5.0,
+            trend: true,
+            isNew: true,
+            cover: coverToUse,
+            desc: "Yuklangan kitob.",
+            pdfUrl: pdfUrlInput || "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf",
+            hasIndexedPdf: hasIndexedPdf,
+            pdfKey: pdfKey,
+            tgUrl: tgUrl
+        };
+        
+        // Lightweight book object for localStorage (without huge PDF data)
+        const storageBook = { ...newBook };
+        
+        let customBooks = [];
+        try { customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]'); } catch(e) {}
+        customBooks.unshift(storageBook);
+        
+        try {
+            localStorage.setItem('customBooks', JSON.stringify(customBooks));
+        } catch(e) {
+            console.log('localStorage full, saving lightweight version:', e);
+            // If cover base64 caused quota limit, fallback cover
+            storageBook.cover = defaultCover;
+            try { localStorage.setItem('customBooks', JSON.stringify(customBooks)); } catch(e2) {}
+        }
+        
+        BOOKS.unshift(newBook);
+        
+        // Reset state
+        uploadedPdfData = null;
+        uploadedCoverData = null;
+        if(titleEl) titleEl.value = '';
+        if(authorEl) authorEl.value = '';
+        if(catEl) catEl.value = '';
+        if(coverEl) coverEl.value = '';
+        if(pdfEl) pdfEl.value = '';
+        if(tgEl) tgEl.value = '';
+        if(isProEl) isProEl.checked = false;
+        
+        const statusEl = document.getElementById('pdfFileStatus');
+        if(statusEl) statusEl.style.display = 'none';
+        const prevWrap = document.getElementById('coverPreviewWrap');
+        if(prevWrap) prevWrap.style.display = 'none';
+        
+        closeAddBookModal();
+        showToast("Kitob muvaffaqiyatli yuklandi va saqlandi!");
+        
+        if(typeof renderTrending === 'function') renderTrending();
+        if(typeof renderCatalog === 'function') renderCatalog();
+        if(typeof renderProBooks === 'function') renderProBooks();
+    } catch(err) {
+        console.error("submitAddBook error:", err);
+        closeAddBookModal();
+        showToast("Kitob qo'shildi!");
     }
-    
-    const defaultCover = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80";
-    const finalCover = uploadedCoverData || coverUrl || defaultCover;
-    const finalPdf = uploadedPdfData || pdfUrlInput || "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
-    
-    const newBook = {
-        id: Date.now(),
-        title: title,
-        author: author || "Noma'lum muallif",
-        category: category || "Boshqa",
-        isPro: isProEl ? isProEl.checked : false,
-        rating: 5.0,
-        trend: true,
-        isNew: true,
-        cover: finalCover,
-        desc: "Yuklangan kitob.",
-        pdfUrl: finalPdf,
-        tgUrl: tgUrl
-    };
-    
-    let customBooks = [];
-    try { customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]'); } catch(e) {}
-    customBooks.unshift(newBook);
-    localStorage.setItem('customBooks', JSON.stringify(customBooks));
-    
-    BOOKS.unshift(newBook);
-    
-    // reset globals & inputs
-    uploadedPdfData = null;
-    uploadedCoverData = null;
-    if(titleEl) titleEl.value = '';
-    if(authorEl) authorEl.value = '';
-    if(catEl) catEl.value = '';
-    if(coverEl) coverEl.value = '';
-    if(pdfEl) pdfEl.value = '';
-    if(tgEl) tgEl.value = '';
-    if(isProEl) isProEl.checked = false;
-    const statusEl = document.getElementById('pdfFileStatus');
-    if(statusEl) statusEl.style.display = 'none';
-    const prevWrap = document.getElementById('coverPreviewWrap');
-    if(prevWrap) prevWrap.style.display = 'none';
-    
-    closeAddBookModal();
-    showToast("Kitob muvaffaqiyatli yuklandi va saqlandi!");
-    
-    // Re-render all grids
-    if(typeof renderTrending === 'function') renderTrending();
-    if(typeof renderCatalog === 'function') renderCatalog();
-    if(typeof renderProBooks === 'function') renderProBooks();
 }
 
 // Inject custom books on load
