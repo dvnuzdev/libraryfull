@@ -210,7 +210,7 @@
     <canvas id="particle-canvas"></canvas>
 
     <nav class="auth-nav">
-        <a href="/" class="logo">
+        <a href="index.html" class="logo">
             Kutubxona <span>Raqamli Portal</span>
         </a>
         <button class="theme-toggle" onclick="toggleTheme()" id="themeIcon"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
@@ -450,7 +450,7 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     showAlert("Muvaffaqiyatli kirdingiz! Yo'naltirilmoqdasiz...", true);
-                    setTimeout(() => window.location.href = '/', 1200);
+                    setTimeout(() => window.location.href = 'index.html', 1200);
                 } else {
                     showAlert(data.message || "Google orqali kirishda xatolik!");
                 }
@@ -477,7 +477,7 @@
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
                     showAlert("Muvaffaqiyatli kirdingiz! Yo'naltirilmoqdasiz...", true);
-                    setTimeout(() => window.location.href = '/', 1200);
+                    setTimeout(() => window.location.href = 'index.html', 1200);
                 } else {
                     showAlert(data.message || "Username yoki parol noto'g'ri!");
                 }
@@ -485,7 +485,7 @@
                 console.log("Backend ulanmagan: Demo token saqlanmoqda");
                 localStorage.setItem('token', 'demo-jwt-token');
                 showAlert("Demo rejimda muvaffaqiyatli kirdingiz!", true);
-                setTimeout(() => window.location.href = '/', 1000);
+                setTimeout(() => window.location.href = 'index.html', 1000);
             }
         }
 
