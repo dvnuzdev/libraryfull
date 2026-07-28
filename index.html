@@ -2111,15 +2111,15 @@ let pageNum = 1;
 let pageRendering = false;
 let pageNumPending = null;
 let scale = 1.0;
-let canvas = null;
-let ctx = null;
+let pdfCanvasObj = null;
+let pdfCtxObj = null;
 
 function renderPage(num) {
     pageRendering = true;
     pdfDoc.getPage(num).then(function(page) {
-        if(!canvas) {
-            canvas = document.getElementById('pdfCanvas');
-            ctx = canvas.getContext('2d');
+        if(!pdfCanvasObj) {
+            pdfCanvasObj = document.getElementById('pdfCanvas');
+            pdfCtxObj = pdfCanvasObj.getContext('2d');
         }
         
         // Adjust scale based on screen width if on mobile
@@ -2129,11 +2129,11 @@ function renderPage(num) {
         }
 
         var viewport = page.getViewport({scale: currentScale});
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+        pdfCanvasObj.height = viewport.height;
+        pdfCanvasObj.width = viewport.width;
 
         var renderContext = {
-            canvasContext: ctx,
+            canvasContext: pdfCtxObj,
             viewport: viewport
         };
         var renderTask = page.render(renderContext);
@@ -2233,7 +2233,7 @@ function readOnline() {
         closeReader();
     });
 }
-" PDF viewerda ochilmoqda...`); }
+
 function addFavorite() {
     if (!activeBook) return;
     if (favorites.has(activeBook.id)) { favorites.delete(activeBook.id); showToast('<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><line x1="12" y1="14" x2="12" y2="10"/></svg>&#x2665; Sevimlilardan olib tashlandi'); }
@@ -2330,16 +2330,16 @@ function toggleTheme() {
 }
 
 /* &#x2500;&#x2500; CANVAS PARTICLES &#x2500;&#x2500; */
-const canvas = document.getElementById('particle-canvas');
-const ctx = canvas.getContext('2d');
+const pCanvas = document.getElementById('particle-canvas');
+const pCtx = pCanvas ? pCanvas.getContext('2d') : null;
 let pts = [];
-function resizeCanvas() { canvas.width = innerWidth; canvas.height = innerHeight; pts = Array.from({length:55}, () => ({ x:Math.random()*canvas.width, y:Math.random()*canvas.height, vx:(Math.random()-.5)*.7, vy:(Math.random()-.5)*.7 })); }
+function resizeCanvas() { if(pCanvas){ pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; } pts = Array.from({length:55}, () => ({ x:Math.random()*(pCanvas?pCanvas.width:1000), y:Math.random()*(pCanvas?pCanvas.height:1000), vx:(Math.random()-.5)*.7, vy:(Math.random()-.5)*.7 })); }
 function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    pts.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x<0||p.x>canvas.width)p.vx*=-1; if(p.y<0||p.y>canvas.height)p.vy*=-1; ctx.beginPath(); ctx.arc(p.x,p.y,1.5,0,Math.PI*2); ctx.fillStyle='rgba(41,151,255,.28)'; ctx.fill(); });
+    if(pCtx&&pCanvas) pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+    pts.forEach(p => { p.x += p.vx; p.y += p.vy; if(p.x<0||(pCanvas&&p.x>pCanvas.width))p.vx*=-1; if(p.y<0||(pCanvas&&p.y>pCanvas.height))p.vy*=-1; if(pCtx) pCtx.beginPath(); if(pCtx) pCtx.arc(p.x,p.y,1.5,0,Math.PI*2); if(pCtx) pCtx.fillStyle='rgba(41,151,255,.28)'; if(pCtx) pCtx.fill(); });
     for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++) {
         const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
-        if(d<115){ ctx.beginPath(); ctx.strokeStyle=`rgba(41,151,255,${.14-d/820})`; ctx.lineWidth=.5; ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.stroke(); }
+        if(d<115){ if(pCtx) pCtx.beginPath(); ctx.strokeStyle=`rgba(41,151,255,${.14-d/820})`; ctx.lineWidth=.5; if(pCtx) pCtx.moveTo(pts[i].x,pts[i].y); if(pCtx) pCtx.lineTo(pts[j].x,pts[j].y); if(pCtx) pCtx.stroke(); }
     }
     requestAnimationFrame(drawParticles);
 }
@@ -2634,262 +2634,13 @@ window.addEventListener('load', () => {
 </script>
 
     <script>
-      if ('serviceWorker' in navigator) {
-        
-
-
-/* --- AUTH MODAL LOGIC --- */
-function openAuthModal() {
-    document.getElementById('authModal').classList.add('active');
-    switchAuthTab('login');
-}
-
-function closeAuthModal() {
-    document.getElementById('authModal').classList.remove('active');
-}
-
-function switchAuthTab(tab) {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const tabLogin = document.getElementById('authTabLogin');
-    const tabRegister = document.getElementById('authTabRegister');
-    const alert = document.getElementById('authAlert');
-    if(alert) alert.style.display = 'none';
-    
-    if(tab === 'login') {
-        loginForm.style.display = 'flex';
-        registerForm.style.display = 'none';
-        tabLogin.style.background = 'var(--bg)';
-        tabLogin.style.color = 'var(--text)';
-        tabRegister.style.background = 'transparent';
-        tabRegister.style.color = 'var(--muted)';
-    } else {
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'flex';
-        tabRegister.style.background = 'var(--bg)';
-        tabRegister.style.color = 'var(--text)';
-        tabLogin.style.background = 'transparent';
-        tabLogin.style.color = 'var(--muted)';
-    }
-}
-
-function showAuthAlert(msg, isSuccess = false) {
-    const el = document.getElementById('authAlert');
-    el.textContent = msg;
-    el.style.display = 'block';
-    el.style.background = isSuccess ? 'rgba(52,199,89,.15)' : 'rgba(255,59,48,.15)';
-    el.style.border = isSuccess ? '1px solid rgba(52,199,89,.3)' : '1px solid rgba(255,59,48,.3)';
-    el.style.color = isSuccess ? '#34c759' : '#ff3b30';
-}
-
-async function handleAuthLogin(e) {
-    e.preventDefault();
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    const API_URL = 'http://localhost:8080/api/auth';
-    
-    try {
-        const res = await fetch(API_URL + '/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if(res.ok) {
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
-            showAuthAlert("Muvaffaqiyatli kirdingiz!", true);
-            setTimeout(() => { closeAuthModal(); checkUserAuth(); showToast('Xush kelibsiz, ' + (data.user.fullName || username) + '!'); }, 800);
-        } else {
-            showAuthAlert(data.message || "Username yoki parol noto'g'ri!");
-        }
-    } catch (err) {
-        // Demo mode - no backend
-        const demoUser = { username, fullName: username };
-        localStorage.setItem('token', 'demo-token-' + Date.now());
-        localStorage.setItem('user', JSON.stringify(demoUser));
-        showAuthAlert("Demo rejimda kirdingiz!", true);
-        setTimeout(() => { closeAuthModal(); checkUserAuth(); showToast('Xush kelibsiz, ' + username + '!'); }, 800);
-    }
-}
-
-async function handleAuthRegister(e) {
-    e.preventDefault();
-    const fullName = document.getElementById('regFullName').value;
-    const username = document.getElementById('regUsername').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    
-    const API_URL = 'http://localhost:8080/api/auth';
-    
-    try {
-        const res = await fetch(API_URL + '/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fullName, username, email, password })
-        });
-        const data = await res.json();
-        if(res.ok) {
-            showAuthAlert("Ro'yxatdan o'tdingiz! Endi kiring.", true);
-            setTimeout(() => switchAuthTab('login'), 1200);
-        } else {
-            showAuthAlert(data.message || "Ro'yxatdan o'tishda xatolik!");
-        }
-    } catch(err) {
-        // Demo mode
-        const demoUser = { username, fullName };
-        localStorage.setItem('token', 'demo-token-' + Date.now());
-        localStorage.setItem('user', JSON.stringify(demoUser));
-        showAuthAlert("Muvaffaqiyatli ro'yxatdan o'tdingiz!", true);
-        setTimeout(() => { closeAuthModal(); checkUserAuth(); showToast('Xush kelibsiz, ' + fullName + '!'); }, 1000);
-    }
-}
-
-/* --- ADMIN & SETTINGS --- */
-function adminLoginPrompt() {
-    if(localStorage.getItem('isAdmin') === 'true') {
-        if(confirm("Admindan chiqishni xohlaysizmi?")) {
-            localStorage.removeItem('isAdmin');
-            location.reload();
-        }
-        return;
-    }
-    const pwd = prompt("Admin parolini kiriting:");
-    if(pwd === 'admin123') {
-        localStorage.setItem('isAdmin', 'true');
-        location.reload();
-    } else if(pwd !== null) {
-        alert("Parol xato!");
-    }
-}
-
-function openSettingsModal() {
-    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
-    document.getElementById('inpBannerActive').checked = settings.bannerActive;
-    document.getElementById('inpBannerText').value = settings.bannerText;
-    document.getElementById('inpBannerLink').value = settings.bannerLink;
-    document.getElementById('inpProLink').value = settings.proLink;
-    
-    document.getElementById('settingsModal').classList.add('active');
-}
-
-function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.remove('active');
-}
-
-function saveSiteSettings() {
-    const settings = {
-        bannerActive: document.getElementById('inpBannerActive').checked,
-        bannerText: document.getElementById('inpBannerText').value,
-        bannerLink: document.getElementById('inpBannerLink').value,
-        proLink: document.getElementById('inpProLink').value
-    };
-    localStorage.setItem('siteSettings', JSON.stringify(settings));
-    closeSettingsModal();
-    showToast("Sozlamalar saqlandi!");
-    applySiteSettings();
-}
-
-function applySiteSettings() {
-    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
-    const banner = document.getElementById('siteBanner');
-    const bannerText = document.getElementById('siteBannerText');
-    if(settings.bannerActive && settings.bannerText) {
-        banner.style.display = 'block';
-        bannerText.textContent = settings.bannerText;
-    } else {
-        banner.style.display = 'none';
-    }
-}
-
-function onBannerClick() {
-    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
-    if(settings.bannerLink) {
-        window.open(settings.bannerLink, '_blank');
-    }
-}
-
-function openProModal() {
-    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
-    const proLink = settings.proLink || 'https://t.me/kutubxona_bot';
-    document.getElementById('proModalLink').href = proLink;
-    document.getElementById('proModal').classList.add('active');
-}
-
-function closeProModal() {
-    document.getElementById('proModal').classList.remove('active');
-}
-
-/* ADD BOOK LOGIC */
-function openAddBookModal() {
-    document.getElementById('addBookModal').classList.add('active');
-}
-function closeAddBookModal() {
-    document.getElementById('addBookModal').classList.remove('active');
-}
-function submitAddBook() {
-    const title = document.getElementById('inpTitle').value;
-    const author = document.getElementById('inpAuthor').value;
-    const category = document.getElementById('inpCategory').value;
-    const cover = document.getElementById('inpCover').value;
-    const pdfUrl = document.getElementById('inpPdf').value;
-    const tgUrl = document.getElementById('inpTg').value;
-    
-    if(!title || !author || !cover) {
-        showToast("Iltimos, ism, muallif va rasm linkini kiriting!");
-        return;
-    }
-    
-    const newBook = {
-        id: Date.now(),
-        title: title,
-        author: author,
-        category: category || "Boshqa",
-        isPro: document.getElementById('inpIsPro') ? document.getElementById('inpIsPro').checked : false,
-        rating: 5.0,
-        trend: true,
-        isNew: true,
-        cover: cover,
-        desc: "Foydalanuvchi tomonidan yuklangan kitob.",
-        pdfUrl: pdfUrl,
-        tgUrl: tgUrl
-    };
-    
-    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
-    customBooks.push(newBook);
-    localStorage.setItem('customBooks', JSON.stringify(customBooks));
-    
-    BOOKS.push(newBook); // add to current array
-    
-    // clear inputs
-    document.getElementById('inpTitle').value = '';
-    document.getElementById('inpAuthor').value = '';
-    document.getElementById('inpCategory').value = '';
-    document.getElementById('inpCover').value = '';
-    document.getElementById('inpPdf').value = '';
-    document.getElementById('inpTg').value = '';
-    
-    closeAddBookModal();
-    showToast("Kitob muvaffaqiyatli qo'shildi!");
-    
-    // Re-render
-    if(typeof renderTrending === 'function') renderTrending();
-    if(typeof renderBooks === 'function') renderBooks();
-}
-
-// Inject custom books on load
-(function initCustomBooks() {
-    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
-    customBooks.forEach(b => BOOKS.push(b));
-})();
-
-window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(reg => {
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
             console.log('SW registered!', reg);
-          }).catch(err => console.log('SW registration failed', err));
-        });
-      }
-    </script>
+        }).catch(err => console.log('SW registration failed', err));
+    });
+}
+</script>
 </body>
 </html>
