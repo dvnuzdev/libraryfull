@@ -1121,6 +1121,14 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
     #adminFloatingBar { bottom: 80px; left: 12px; right: 12px; justify-content: space-between; padding: 8px 14px; border-radius: 24px; }
 }
 
+
+/* ---- TELEGRAM INFO CARD RESPONSIVE ---- */
+@media(max-width:700px){
+    .tg-info-card { flex-direction:column; text-align:center !important; gap:14px !important; padding:18px 16px !important; }
+    .tg-info-card div { text-align:center !important; }
+    .tg-info-card a { width:100%; text-align:center; justify-content:center; }
+}
+
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
@@ -1234,6 +1242,25 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
     <section class="hero">
         <div class="hero-badge"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> O'zbekistonning Eng Zamonaviy Raqamli Kutubxonasi</div>
         <h1>Kitob O'qing, Fikr Yuriting,<br><span class="grad-text">Dunyoni O'zgartiring.</span></h1>
+
+        <!-- EXPLICIT TELEGRAM ANNOUNCEMENT CARD -->
+        <div class="tg-info-card" style="width:100%; max-width:720px; margin:0 auto 28px; background:linear-gradient(135deg, rgba(0,136,204,0.16), rgba(41,151,255,0.06)); border:1px solid rgba(0,136,204,0.35); border-radius:24px; padding:20px 24px; text-align:left; display:flex; align-items:center; gap:18px; box-shadow:0 12px 35px rgba(0,136,204,0.15); backdrop-filter:blur(20px);">
+            <div style="width:52px; height:52px; border-radius:50%; background:linear-gradient(135deg,#0088cc,#0066aa); display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; flex-shrink:0; box-shadow:0 8px 20px rgba(0,136,204,0.4);">
+                ✈️
+            </div>
+            <div style="flex:1;">
+                <div style="font-size:1.02rem; font-weight:900; color:var(--text); margin-bottom:4px; display:flex; align-items:center; gap:8px;">
+                    Barcha Kitoblar Telegram Kanalimizda!
+                    <span style="background:rgba(0,136,204,0.2); color:#0088cc; font-size:.7rem; padding:2px 8px; border-radius:12px; font-weight:800; text-transform:uppercase;">BEPUL YUKLASH</span>
+                </div>
+                <div style="font-size:.85rem; color:var(--muted); line-height:1.5; font-weight:600;">
+                    Barcha elektron va audio kitoblarimiz rasmiy Telegram kanalimiz va botimizda joylashtirilgan. Saytdan kitobni tanlang va 1-bosishda Telegram orqali yuklab oling!
+                </div>
+            </div>
+            <a href="https://t.me/kutubxona_kanal" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#0088cc,#0066aa); color:#fff; text-decoration:none; padding:11px 20px; font-size:.88rem; border-radius:20px; white-space:nowrap; font-weight:800; box-shadow:0 6px 20px rgba(0,136,204,0.35);">
+                Kanalga O'tish &rarr;
+            </a>
+        </div>
 
         <!-- MOTIVATIONAL QUOTES ROTATOR -->
         <div class="quote-box" id="quoteBox">
@@ -1403,6 +1430,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
                 <div>
                     <div class="section-title"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Kitoblar Katalogi</div>
                     <div class="section-sub">1,450+ elektron kitob va qo'llanmalar</div>
+                    <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,136,204,.12); border:1px solid rgba(0,136,204,.25); color:#0088cc; padding:5px 14px; border-radius:20px; font-size:.8rem; font-weight:800; margin-top:8px;">
+                        ✈️ Barcha kitob fayllari Telegram kanalimizda bepul yuklash uchun ochiq
+                    </div>
                 </div>
             </div>
 
@@ -1535,62 +1565,50 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
         </div>
     </div>
 
-    <!-- ADD BOOK MODAL -->
+    <!-- ADD BOOK MODAL (TELEGRAM LINK FOCUSED) -->
     <div class="modal-overlay" id="addBookModal">
-        <div class="modal" style="max-height:90vh; overflow-y:auto; grid-template-columns:1fr; max-width:560px;">
+        <div class="modal" style="max-height:90vh; overflow-y:auto; grid-template-columns:1fr; max-width:540px;">
             <button class="modal-close" onclick="closeAddBookModal()">&#x2715;</button>
             <div style="grid-column:1;">
-                <h2 style="margin-bottom:4px; font-weight:900; font-size:1.5rem; display:flex; align-items:center; gap:8px;">📁 Kitob Yuklash</h2>
-                <p style="color:var(--muted); font-size:.88rem; margin-bottom:20px;">Faylni kompyuterdan tanlang yoki URL kiritib yuklang</p>
-                
-                <!-- EASY FILE DROP ZONE -->
-                <div id="dropZone" style="border:2px dashed var(--blue); background:rgba(41,151,255,.06); border-radius:18px; padding:24px; text-align:center; margin-bottom:18px; cursor:pointer; transition:.3s;" onclick="document.getElementById('filePdf').click()">
-                    <div style="font-size:2.8rem; margin-bottom:8px;">📄</div>
-                    <div style="font-weight:800; font-size:.98rem; color:var(--text); margin-bottom:4px;">PDF Faylini Tanlang (Kompyuterdan)</div>
-                    <div style="font-size:.8rem; color:var(--muted);">Faylni shu yerga bosing va tanlang</div>
-                    <input type="file" id="filePdf" accept="application/pdf" style="display:none;" onchange="handlePdfFileSelect(event)">
-                    <div id="pdfFileStatus" style="margin-top:8px; font-size:.82rem; font-weight:700; color:var(--green); display:none;"></div>
+                <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(0,136,204,.14); border:1px solid rgba(0,136,204,.3); color:#0088cc; padding:4px 14px; border-radius:20px; font-size:.78rem; font-weight:800; margin-bottom:10px;">
+                    ✈️ TELEGRAM MANBA TIZIMI
                 </div>
+                <h2 style="margin-bottom:4px; font-weight:900; font-size:1.5rem;">✈️ Yangi Kitob Qo'shish</h2>
+                <p style="color:var(--muted); font-size:.88rem; margin-bottom:20px;">Telegram post/fayl havolasini kiritib kitob qo'shing</p>
 
                 <div style="display:flex; flex-direction:column; gap:14px;">
                     <div>
                         <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Kitob Nomi *</label>
-                        <input type="text" id="inpTitle" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="Kitob sarlavhasi">
+                        <input type="text" id="inpTitle" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="Masalan: Garri Potter va Sehrli Tosh">
                     </div>
                     <div>
-                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Muallif</label>
-                        <input type="text" id="inpAuthor" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="Muallif ismi">
+                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Muallif *</label>
+                        <input type="text" id="inpAuthor" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="J.K. Rowling">
                     </div>
                     <div>
                         <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Janr</label>
-                        <input type="text" id="inpCategory" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="Roman, IT, Fantastika, Detektiv...">
+                        <input type="text" id="inpCategory" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="Badiiy, IT, Biznes, Psixologiya...">
+                    </div>
+
+                    <div>
+                        <label style="font-size:.78rem; color:var(--blue); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">✈️ Telegram Post / Fayl Linki *</label>
+                        <input type="text" id="inpTg" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid rgba(0,136,204,.4); background:rgba(0,136,204,.06); color:var(--text); font-size:.95rem; outline:none;" placeholder="https://t.me/kutubxona_kanal/123">
                     </div>
 
                     <!-- COVER IMAGE PICKER (FILE OR URL) -->
                     <div>
-                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Muqova Rasmi (Kompyuterdan tanlash yoki URL)</label>
+                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Muqova Rasmi (URL yoki fayl tanlash)</label>
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <input type="text" id="inpCover" style="flex:1; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.9rem; outline:none;" placeholder="https://... (yoki o'ngdagi tugmani bosing)">
+                            <input type="text" id="inpCover" style="flex:1; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.9rem; outline:none;" placeholder="https://... (yoki Rasm Tanlash)">
                             <button type="button" class="btn-ghost" onclick="document.getElementById('fileCover').click()" style="padding:12px 16px; font-size:.85rem; border-radius:12px; white-space:nowrap; display:flex; align-items:center; gap:6px;">
-                                🖼️ Rasm Tanlash
+                                🖼️ Tanlash
                             </button>
                             <input type="file" id="fileCover" accept="image/*" style="display:none;" onchange="handleCoverFileSelect(event)">
                         </div>
                         <div id="coverPreviewWrap" style="margin-top:10px; display:none; align-items:center; gap:10px;">
                             <img id="coverPreview" src="" style="width:50px; height:65px; border-radius:8px; object-fit:cover; border:1px solid var(--border);">
-                            <span style="font-size:.8rem; color:var(--green); font-weight:700;">✓ Muqova rasmi tanlandi</span>
+                            <span style="font-size:.8rem; color:var(--green); font-weight:700;">✓ Muqova tanlandi</span>
                         </div>
-                    </div>
-
-                    <!-- PDF URL INPUT (IF NO FILE PICKED) -->
-                    <div>
-                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">PDF Linki (Agar fayl yuklanmagan bo'lsa URL kiriting)</label>
-                        <input type="text" id="inpPdf" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="https://example.com/book.pdf">
-                    </div>
-
-                    <div>
-                        <label style="font-size:.78rem; color:var(--muted); margin-bottom:6px; display:block; font-weight:800; text-transform:uppercase; letter-spacing:.5px;">Telegram Linki (Ixtiyoriy)</label>
-                        <input type="text" id="inpTg" style="width:100%; padding:12px 16px; border-radius:12px; border:1px solid var(--border); background:rgba(255,255,255,.05); color:var(--text); font-size:.95rem; outline:none;" placeholder="https://t.me/kutubxona_bot">
                     </div>
                     
                     <label style="display:flex; align-items:center; gap:12px; cursor:pointer; padding:14px; background:rgba(255,215,0,.06); border:1px solid rgba(255,215,0,.25); border-radius:14px; margin-top:4px;">
@@ -1601,7 +1619,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
                         </div>
                     </label>
 
-                    <button class="btn-primary" onclick="submitAddBook()" style="justify-content:center; width:100%; padding:14px; margin-top:6px; font-size:1rem; border-radius:16px;">✓ Kitobni Saqlash va Qo'shish</button>
+                    <button class="btn-primary" onclick="submitAddBook()" style="justify-content:center; width:100%; padding:14px; margin-top:6px; font-size:1rem; border-radius:16px; background:linear-gradient(135deg,#0088cc,#0066aa); color:#fff; box-shadow:0 8px 25px rgba(0,136,204,.35);">
+                        ✈️ Kitobni Saqlash va Qo'shish
+                    </button>
                 </div>
             </div>
         </div>
@@ -1757,14 +1777,20 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
                 <span class="star" onclick="setModalRating(5)">&#x2605;</span>
             </div>
 
+            <div style="background:rgba(0,136,204,.08); border:1px solid rgba(0,136,204,.2); border-radius:14px; padding:10px 14px; margin-bottom:14px; font-size:.82rem; color:var(--text); display:flex; align-items:center; gap:8px;">
+                <span style="font-size:1.2rem;">✈️</span>
+                <span>Kitoblar Telegram kanalimizda bepul yuklab olish uchun joylashtirilgan.</span>
+            </div>
             <div class="modal-actions" style="display:flex; flex-direction:column; gap:10px;">
-                <div style="display:flex; gap:10px; width: 100%;">
-                    <button class="btn-primary" onclick="readOnline()" style="flex:1; justify-content:center;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Saytda O'qish</button>
-                    <a href="https://t.me/kutubxona_bot" id="modalTgLink" target="_blank" class="btn-primary" style="background:#0088cc; flex:1; justify-content:center; text-decoration:none;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Telegramda O'qish</a>
+                <a href="https://t.me/kutubxona_kanal" id="modalTgLink" target="_blank" class="btn-primary" style="background:linear-gradient(135deg,#0088cc,#0066aa); justify-content:center; text-decoration:none; padding:14px; font-weight:900; font-size:1rem; border-radius:16px; box-shadow:0 8px 25px rgba(0,136,204,.35);">
+                    <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px;"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    Telegramda O'qish va Yuklash
+                </a>
+                <button class="btn-ghost" onclick="readOnline()" style="justify-content:center; font-size:.88rem;">📖 Saytda Ko'rish (Namuna)</button>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-ghost" onclick="addFavorite()" style="flex:1;">❤️ Sevimli</button>
+                    <button class="btn-ghost" onclick="addReadLater()" style="flex:1;">📌 Keyinroq</button>
                 </div>
-                <button class="btn-ghost" onclick="addFavorite()">&#x2764;&#xFE0F;&#x2665; Sevimli</button>
-                <button class="btn-ghost" onclick="addReadLater()"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Keyinroq</button>
-                <button class="btn-ghost" onclick="reserveBook()"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Bron</button>
             </div>
 
             <!-- COMMENT BOX -->
@@ -2785,13 +2811,12 @@ function handleCoverFileSelect(e) {
     reader.readAsDataURL(file);
 }
 
-async function submitAddBook() {
+function submitAddBook() {
     try {
         const titleEl = document.getElementById('inpTitle');
         const authorEl = document.getElementById('inpAuthor');
         const catEl = document.getElementById('inpCategory');
         const coverEl = document.getElementById('inpCover');
-        const pdfEl = document.getElementById('inpPdf');
         const tgEl = document.getElementById('inpTg');
         const isProEl = document.getElementById('inpIsPro');
         
@@ -2799,7 +2824,6 @@ async function submitAddBook() {
         const author = authorEl ? authorEl.value.trim() : '';
         const category = catEl ? catEl.value.trim() : '';
         const coverUrl = coverEl ? coverEl.value.trim() : '';
-        const pdfUrlInput = pdfEl ? pdfEl.value.trim() : '';
         const tgUrl = tgEl ? tgEl.value.trim() : '';
         
         if(!title) {
@@ -2807,24 +2831,12 @@ async function submitAddBook() {
             return;
         }
         
-        const bookId = Date.now();
         const defaultCover = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80";
-        
-        // If cover is large base64, use it or fallback if storage fails
-        const coverToUse = uploadedCoverData || coverUrl || defaultCover;
-        const pdfKey = 'pdf_' + bookId;
-        
-        // If user uploaded a local PDF file, store in IndexedDB (no 5MB limit!)
-        let hasIndexedPdf = false;
-        if(uploadedPdfData) {
-            try {
-                await savePdfToDB(pdfKey, uploadedPdfData);
-                hasIndexedPdf = true;
-            } catch(e) { console.log('IndexedDB save error:', e); }
-        }
+        const finalCover = uploadedCoverData || coverUrl || defaultCover;
+        const finalTgUrl = tgUrl || "https://t.me/kutubxona_kanal";
         
         const newBook = {
-            id: bookId,
+            id: Date.now(),
             title: title,
             author: author || "Noma'lum muallif",
             category: category || "Boshqa",
@@ -2832,50 +2844,38 @@ async function submitAddBook() {
             rating: 5.0,
             trend: true,
             isNew: true,
-            cover: coverToUse,
-            desc: "Yuklangan kitob.",
-            pdfUrl: pdfUrlInput || "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf",
-            hasIndexedPdf: hasIndexedPdf,
-            pdfKey: pdfKey,
-            tgUrl: tgUrl
+            cover: finalCover,
+            desc: "Telegram kanalimizdagi eksklyuziv kitob.",
+            pdfUrl: "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf",
+            tgUrl: finalTgUrl
         };
-        
-        // Lightweight book object for localStorage (without huge PDF data)
-        const storageBook = { ...newBook };
         
         let customBooks = [];
         try { customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]'); } catch(e) {}
-        customBooks.unshift(storageBook);
+        customBooks.unshift(newBook);
         
         try {
             localStorage.setItem('customBooks', JSON.stringify(customBooks));
         } catch(e) {
-            console.log('localStorage full, saving lightweight version:', e);
-            // If cover base64 caused quota limit, fallback cover
-            storageBook.cover = defaultCover;
+            newBook.cover = defaultCover;
             try { localStorage.setItem('customBooks', JSON.stringify(customBooks)); } catch(e2) {}
         }
         
         BOOKS.unshift(newBook);
         
-        // Reset state
-        uploadedPdfData = null;
         uploadedCoverData = null;
         if(titleEl) titleEl.value = '';
         if(authorEl) authorEl.value = '';
         if(catEl) catEl.value = '';
         if(coverEl) coverEl.value = '';
-        if(pdfEl) pdfEl.value = '';
         if(tgEl) tgEl.value = '';
         if(isProEl) isProEl.checked = false;
         
-        const statusEl = document.getElementById('pdfFileStatus');
-        if(statusEl) statusEl.style.display = 'none';
         const prevWrap = document.getElementById('coverPreviewWrap');
         if(prevWrap) prevWrap.style.display = 'none';
         
         closeAddBookModal();
-        showToast("Kitob muvaffaqiyatli yuklandi va saqlandi!");
+        showToast("Kitob Telegram havolasi bilan qo'shildi!");
         
         if(typeof renderTrending === 'function') renderTrending();
         if(typeof renderCatalog === 'function') renderCatalog();
