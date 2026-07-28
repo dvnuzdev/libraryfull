@@ -2595,47 +2595,58 @@ function closeAddBookModal() {
     const m = document.getElementById('addBookModal'); if(m) { m.classList.remove('open'); m.classList.remove('active'); }
 }
 function submitAddBook() {
-    const title = document.getElementById('inpTitle').value.trim();
-    const author = document.getElementById('inpAuthor').value.trim();
-    const category = document.getElementById('inpCategory').value.trim();
-    const cover = document.getElementById('inpCover').value.trim();
-    const pdfUrl = document.getElementById('inpPdf').value.trim();
-    const tgUrl = document.getElementById('inpTg').value.trim();
+    const titleEl = document.getElementById('inpTitle');
+    const authorEl = document.getElementById('inpAuthor');
+    const catEl = document.getElementById('inpCategory');
+    const coverEl = document.getElementById('inpCover');
+    const pdfEl = document.getElementById('inpPdf');
+    const tgEl = document.getElementById('inpTg');
+    const isProEl = document.getElementById('inpIsPro');
     
-    if(!title || !author || !cover) {
-        showToast("Iltimos, nom, muallif va muqova (rasm) linkini kiriting!");
+    const title = titleEl ? titleEl.value.trim() : '';
+    const author = authorEl ? authorEl.value.trim() : '';
+    const category = catEl ? catEl.value.trim() : '';
+    const cover = coverEl ? coverEl.value.trim() : '';
+    const pdfUrl = pdfEl ? pdfEl.value.trim() : '';
+    const tgUrl = tgEl ? tgEl.value.trim() : '';
+    
+    if(!title) {
+        showToast("Iltimos, kitob nomini kiriting!");
         return;
     }
+    
+    const defaultCover = "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80";
     
     const newBook = {
         id: Date.now(),
         title: title,
-        author: author,
+        author: author || "Noma'lum muallif",
         category: category || "Boshqa",
-        isPro: document.getElementById('inpIsPro') ? document.getElementById('inpIsPro').checked : false,
+        isPro: isProEl ? isProEl.checked : false,
         rating: 5.0,
         trend: true,
         isNew: true,
-        cover: cover,
-        desc: "Yangi qo'shilgan kitob.",
+        cover: cover || defaultCover,
+        desc: "Admin tomonidan qo'shilgan kitob.",
         pdfUrl: pdfUrl,
         tgUrl: tgUrl
     };
     
-    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
+    let customBooks = [];
+    try { customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]'); } catch(e) {}
     customBooks.unshift(newBook);
     localStorage.setItem('customBooks', JSON.stringify(customBooks));
     
     BOOKS.unshift(newBook);
     
     // clear inputs
-    document.getElementById('inpTitle').value = '';
-    document.getElementById('inpAuthor').value = '';
-    document.getElementById('inpCategory').value = '';
-    document.getElementById('inpCover').value = '';
-    document.getElementById('inpPdf').value = '';
-    document.getElementById('inpTg').value = '';
-    if(document.getElementById('inpIsPro')) document.getElementById('inpIsPro').checked = false;
+    if(titleEl) titleEl.value = '';
+    if(authorEl) authorEl.value = '';
+    if(catEl) catEl.value = '';
+    if(coverEl) coverEl.value = '';
+    if(pdfEl) pdfEl.value = '';
+    if(tgEl) tgEl.value = '';
+    if(isProEl) isProEl.checked = false;
     
     closeAddBookModal();
     showToast("Kitob muvaffaqiyatli qo'shildi!");
@@ -2654,6 +2665,8 @@ window.addEventListener('load', () => {
     document.documentElement.setAttribute('data-theme', t);
     document.getElementById('themeIcon').innerHTML = t === 'light' ? '<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>' : '<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
     checkUserAuth();
+    checkAdminState();
+    applySiteSettings();
     initQuotes();
     animCount('cnt1', 1450, '+');
     animCount('cnt2', 350, '+');
