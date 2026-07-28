@@ -1770,7 +1770,12 @@ function toggleFooter() {
     }
 }
 
-const BOOKS = [
+let customBooksList = [];
+try {
+    customBooksList = JSON.parse(localStorage.getItem('customBooks') || '[]');
+} catch(e) { customBooksList = []; }
+
+const DEFAULT_BOOKS = [
     {
         id: 999,
         title: "Garri Potter va hikmatlar toshi (PRO)",
@@ -1779,7 +1784,8 @@ const BOOKS = [
         category: "Fantastika",
         rating: 5.0,
         trend: false,
-        isPro: true
+        isPro: true,
+        pdfUrl: "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf"
     }
 ,
     { id:1, title:"Java Spring Boot Asoslari", author:"Jaloliddin Qodirov", category:"IT & Dasturlash", rating:4.9, progress:80, trend:true, isNew:true, cover:"https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=600&q=80", desc:"Spring Boot frameworkini 0 dan professional darajagacha o'rganish bo'yicha amaliy qo'llanma." },
@@ -2198,12 +2204,8 @@ function readOnline() {
         return;
     }
     
-    // Check if pdfUrl exists
-    let url = activeBook.pdfUrl;
-    if(!url) {
-        showToast("Kechirasiz, ushbu kitobning PDF varianti hozircha yuklanmagan.");
-        return;
-    }
+    // PDF URL - use sample fallback if missing
+    let url = activeBook.pdfUrl || "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
     
     closeBookModal();
     
@@ -2213,34 +2215,56 @@ function readOnline() {
     readerEl.style.flexDirection = 'column';
     document.getElementById('readerTitle').textContent = activeBook.title;
     
-    // Show loading, hide canvas & nav
     const loadingEl = document.getElementById('pdfLoading');
     const canvasEl = document.getElementById('pdfCanvas');
     const navEl = document.getElementById('pdfNav');
-    if(loadingEl) loadingEl.style.display = 'flex';
+    if(loadingEl) {
+        loadingEl.style.display = 'flex';
+        loadingEl.innerHTML = '<div style="width:52px; height:52px; border:3px solid var(--border); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;"></div><div style="font-weight:700; font-size:1rem;">PDF yuklanmoqda...</div>';
+    }
     if(canvasEl) canvasEl.style.display = 'none';
     if(navEl) navEl.style.display = 'none';
     
-    // reset
     scale = 1.0;
     pageNum = 1;
     document.getElementById('pageCount').textContent = "...";
     
-    // Configure PDF.js worker
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     
-    pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
-        pdfDoc = pdfDoc_;
-        renderPage(pageNum).then(() => {
-            // Hide loading, show canvas
-            if(loadingEl) loadingEl.style.display = 'none';
-            if(canvasEl) canvasEl.style.display = 'block';
-            if(navEl) navEl.style.display = 'flex';
+    function tryLoad(pdfUrlToLoad, isFallback = false) {
+        pdfjsLib.getDocument(pdfUrlToLoad).promise.then(function(pdfDoc_) {
+            pdfDoc = pdfDoc_;
+            renderPage(pageNum).then(() => {
+                if(loadingEl) loadingEl.style.display = 'none';
+                if(canvasEl) canvasEl.style.display = 'block';
+                if(navEl) navEl.style.display = 'flex';
+                if(isFallback) {
+                    showToast("Asl PDF havolasi bloklangan. Namuna PDF ko'rsatilmoqda.");
+                }
+            });
+        }).catch(err => {
+            if(!isFallback && pdfUrlToLoad !== "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf") {
+                console.log("CORS/Fetch error, trying sample fallback...");
+                tryLoad("https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf", true);
+            } else {
+                if(loadingEl) {
+                    loadingEl.style.display = 'flex';
+                    loadingEl.innerHTML = `
+                        <div style="text-align:center; padding:20px; max-width:420px; background:var(--surface2); border-radius:20px; border:1px solid var(--border);">
+                            <div style="font-size:2.5rem; margin-bottom:10px;">⚠️</div>
+                            <h3 style="margin-bottom:8px; font-weight:800;">PDF Yuklashda Cheklov</h3>
+                            <p style="font-size:.88rem; color:var(--muted); margin-bottom:18px; line-height:1.5;">Ushbu PDF havolasi brauzer xavfsizligi (CORS) tufayli to'g'ridan-to'g'ri ochilmadi. Quyidagi tugmalar orqali ko'rishingiz mumkin:</p>
+                            <div style="display:flex; flex-direction:column; gap:10px;">
+                                <a href="${pdfUrlToLoad}" target="_blank" class="btn-primary" style="justify-content:center; text-decoration:none;">📄 Faylni Yangi Oynada Ochish</a>
+                                <a href="${activeBook.tgUrl || 'https://t.me/kutubxona_bot'}" target="_blank" class="btn-ghost" style="justify-content:center; text-decoration:none; background:#0088cc; color:#fff;">✈️ Telegramda O'qish</a>
+                            </div>
+                        </div>`;
+                }
+            }
         });
-    }).catch(err => {
-        showToast("PDF yuklashda xatolik: " + err.message);
-        closeReader();
-    });
+    }
+
+    tryLoad(url);
 }
 
 function addFavorite() {
@@ -2623,10 +2647,7 @@ function submitAddBook() {
 }
 
 // Inject custom books on load
-(function initCustomBooks() {
-    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
-    customBooks.forEach(b => BOOKS.push(b));
-})();
+// Custom books loaded at top
 
 window.addEventListener('load', () => {
     const t = localStorage.getItem('theme') || 'dark';
