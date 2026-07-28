@@ -997,6 +997,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 }
 
     </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 </head>
 <body>
 <div class="grid-bg"></div>
@@ -1082,6 +1083,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 
      <!-- PAGE: HOME -->
 <div class="page active" id="page-home">
+
+    <!-- ANNOUNCEMENT BANNER -->
+    <div id="siteBanner" style="display:none; background:linear-gradient(90deg, var(--primary), #b000a6); color:#fff; padding:12px 20px; text-align:center; font-weight:600; cursor:pointer; position:relative; z-index:10; border-radius: 8px; margin: 15px 15px 0 15px; box-shadow:0 4px 15px rgba(230,0,122,0.4);" onclick="onBannerClick()">
+        <span id="siteBannerText">Konkurs e'loni bu yerda</span>
+    </div>
+
 
     <!-- HERO -->
     <section class="hero">
@@ -1307,6 +1314,12 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
             <!-- PROFILE STATS -->
             
 
+            
+            <div id="adminActionButtons" style="display:none; margin-top:20px; text-align:center; gap:10px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-primary" onclick="openAddBookModal()" style="border-radius:20px; padding:12px 24px;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg> Yangi Kitob Qo'shish</button>
+                <button class="btn-secondary" onclick="openSettingsModal()" style="border-radius:20px; padding:12px 24px; background:var(--surface3); color:var(--text); border:none;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> Sayt Sozlamalari</button>
+            </div>
+
             <!-- FAVORITES LIST -->
             <div class="goal-section">
                 <h3>&#x2764;&#xFE0F; Sevimli Kitoblar</h3>
@@ -1327,6 +1340,115 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 </div><!-- /page-profile -->
 
      <!-- PAGE: NOTIFICATIONS -->
+
+    
+    
+    <!-- SITE SETTINGS MODAL -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal" style="max-height:90vh; overflow-y:auto;">
+            <button class="modal-close" onclick="closeSettingsModal()">&times;</button>
+            <h3 style="margin-bottom:15px; font-weight:800; text-align:center;">Sayt Sozlamalari</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div style="padding:15px; background:var(--surface3); border-radius:10px;">
+                    <h4 style="margin-bottom:10px; color:var(--primary);">Konkurs / E'lon Banneri</h4>
+                    <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;">
+                        <input type="checkbox" id="inpBannerActive" style="width:18px; height:18px;">
+                        <span>Bannerni yoqish</span>
+                    </label>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Banner Matni</label>
+                    <input type="text" id="inpBannerText" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text); margin-bottom:10px;" placeholder="Konkursda ishtirok eting!">
+                    
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Banner Linki (Ixtiyoriy)</label>
+                    <input type="text" id="inpBannerLink" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="https://t.me/.../123">
+                </div>
+
+                <div style="padding:15px; background:var(--surface3); border-radius:10px;">
+                    <h4 style="margin-bottom:10px; color:var(--primary);">PRO Kitoblar Sozlamasi</h4>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Telegramdagi PRO Obuna Posti Linki</label>
+                    <input type="text" id="inpProLink" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="https://t.me/...">
+                </div>
+
+                <button class="btn-primary" onclick="saveSiteSettings()" style="margin-top:10px; justify-content:center; width:100%;">Saqlash</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PRO MODAL -->
+    <div class="modal-overlay" id="proModal">
+        <div class="modal" style="text-align:center; padding:30px 20px;">
+            <button class="modal-close" onclick="closeProModal()">&times;</button>
+            <div style="font-size:3rem; margin-bottom:15px;">&#x1F512;</div>
+            <h2 style="margin-bottom:10px; color:var(--primary); font-weight:900;">PRO OBUNA KERAK</h2>
+            <p style="color:var(--muted); margin-bottom:20px; line-height:1.5;">Ushbu maxsus kitobni o'qish uchun sizda <b>PRO</b> obuna bo'lishi kerak. Obunani rasmiy Telegram sahifamizdan sotib olishingiz mumkin!</p>
+            <a href="#" id="proModalLink" target="_blank" class="btn-primary" style="display:inline-flex; width:100%; justify-content:center; padding:12px; background:linear-gradient(45deg, #FFD700, #FDB931); color:#000; font-weight:bold; text-decoration:none;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em; margin-right:5px;"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Telegram orqali PRO Obuna Olish</a>
+        </div>
+    </div>
+
+    <!-- ADD BOOK MODAL -->
+    <div class="modal-overlay" id="addBookModal">
+        <div class="modal" style="max-height:90vh; overflow-y:auto;">
+            <button class="modal-close" onclick="closeAddBookModal()">&times;</button>
+            <h3 style="margin-bottom:15px; font-weight:800; text-align:center;">Yangi Kitob Qo'shish</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Kitob Nomi</label>
+                    <input type="text" id="inpTitle" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="Masalan: Garri Potter">
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Muallif</label>
+                    <input type="text" id="inpAuthor" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="Muallif ismi">
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Janr</label>
+                    <input type="text" id="inpCategory" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="Roman, IT, Detektiv...">
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Muqova (Rasm) Linki</label>
+                    <input type="text" id="inpCover" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="https://...">
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">PDF Linki (Ixtiyoriy)</label>
+                    <input type="text" id="inpPdf" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="https://...">
+                </div>
+                <div>
+                    <label style="font-size:0.85rem; color:var(--muted); margin-bottom:4px; display:block;">Telegram Linki (Ixtiyoriy)</label>
+                    <input type="text" id="inpTg" style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--surface2); color:var(--text);" placeholder="https://t.me/...">
+                </div>
+                <label style="display:flex; align-items:center; gap:10px; margin:5px 0; cursor:pointer;">
+                    <input type="checkbox" id="inpIsPro" style="width:18px; height:18px;">
+                    <span style="font-weight:bold; color:#FFD700;">PRO Kitob (Faqat obunachilar uchun)</span>
+                </label>
+                <button class="btn-primary" onclick="submitAddBook()" style="margin-top:10px; justify-content:center; width:100%;">Qo'shish</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE: READER -->
+    <div class="page" id="page-reader" style="background: var(--bg); position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000; overflow-y: auto;">
+        <div style="position: sticky; top: 0; background: var(--surface); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 10;">
+            <button onclick="closeReader()" style="background:none; border:none; color:var(--text); font-size:1.1rem; cursor:pointer; display:flex; align-items:center; gap:8px;">
+                <svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> Chiqish
+            </button>
+            <div id="readerTitle" style="font-weight: 700; font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 50%;">Kitob Nomi</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <button onclick="zoomOut()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer;">-</button>
+                <span id="pageCount" style="font-size: 0.9rem; font-weight: 600;">1 / ?</span>
+                <button onclick="zoomIn()" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:6px 10px; border-radius:8px; cursor:pointer;">+</button>
+            </div>
+        </div>
+        
+        <div id="pdfContainer" style="display: flex; flex-direction: column; align-items: center; padding: 20px; gap: 20px; overflow-y: auto;">
+            <canvas id="pdfCanvas" style="max-width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border-radius: 8px;"></canvas>
+            
+            <div style="display:flex; gap: 20px; margin-top: 10px; margin-bottom: 30px;">
+                <button onclick="prevPage()" id="btnPrev" class="btn-primary" style="padding: 10px 20px;">&larr; Oldingi</button>
+                <button onclick="nextPage()" id="btnNext" class="btn-primary" style="padding: 10px 20px;">Keyingi &rarr;</button>
+            </div>
+        </div>
+    </div>
+
 <div class="page" id="page-notifications">
     <section class="section" style="padding-top:calc(var(--nav-h) + 50px);">
         <div class="section-inner" style="max-width:760px;">
@@ -1365,8 +1487,11 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
                 <span class="star" onclick="setModalRating(5)">&#x2605;</span>
             </div>
 
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="readOnline()"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Onlayn O'qish</button>
+            <div class="modal-actions" style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; gap:10px; width: 100%;">
+                    <button class="btn-primary" onclick="readOnline()" style="flex:1; justify-content:center;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> Saytda O'qish</button>
+                    <a href="https://t.me/kutubxona_bot" id="modalTgLink" target="_blank" class="btn-primary" style="background:#0088cc; flex:1; justify-content:center; text-decoration:none;"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M22 2L11 13"></path><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> Telegramda O'qish</a>
+                </div>
                 <button class="btn-ghost" onclick="addFavorite()">&#x2764;&#xFE0F;&#x2665; Sevimli</button>
                 <button class="btn-ghost" onclick="addReadLater()"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> Keyinroq</button>
                 <button class="btn-ghost" onclick="reserveBook()"><svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Bron</button>
@@ -1444,6 +1569,9 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:46px
 
     </div>
 
+    <div style="text-align:center; margin-top:20px; padding-bottom:20px;">
+        <span onclick="adminLoginPrompt()" style="cursor:pointer; color:var(--muted); opacity:0.3;"><svg width="1.2em" height="1.2em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+    </div>
 </footer>
 
      <!-- JAVASCRIPT -->
@@ -1467,6 +1595,17 @@ function toggleFooter() {
 }
 
 const BOOKS = [
+    {
+        id: 999,
+        title: "Garri Potter va hikmatlar toshi (PRO)",
+        author: "J.K. Rowling",
+        cover: "https://i.pinimg.com/736x/87/0f/c6/870fc6037e23114d541581e6b36dcafc.jpg",
+        category: "Fantastika",
+        rating: 5.0,
+        trend: false,
+        isPro: true
+    }
+,
     { id:1, title:"Java Spring Boot Asoslari", author:"Jaloliddin Qodirov", category:"IT & Dasturlash", rating:4.9, progress:80, trend:true, isNew:true, cover:"https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=600&q=80", desc:"Spring Boot frameworkini 0 dan professional darajagacha o'rganish bo'yicha amaliy qo'llanma." },
     { id:2, title:"Clean Code: Pokiza Kod", author:"Robert C. Martin", category:"IT & Dasturlash", rating:5.0, progress:45, trend:true, isNew:false, cover:"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80", desc:"Professional dasturchilar uchun o'qilishi oson va toza kod yozish sirlari." },
     { id:3, title:"Atomic Habits (Atom Odatlari)", author:"James Clear", category:"Shaxsiy Rivojlanish", rating:4.95, progress:90, trend:true, isNew:true, cover:"https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80", desc:"Kichik 1% o'zgarishlar orqali katta natijalarga erishish va ijobiy odatlar shakllantirish." },
@@ -1614,6 +1753,24 @@ function animCount(id, target, suffix='') {
 
 /* &#x2500;&#x2500; BOOK CARD HTML &#x2500;&#x2500; */
 function bookCardHTML(book) {
+    if (book.isPro) {
+        return `
+        <div class="book-card" id="bcard-${book.id}" onclick="openProModal()" style="position:relative; overflow:hidden; cursor:pointer; min-width:140px;">
+            <div style="position:absolute; inset:0; z-index:2; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(0,0,0,0.4);">
+                <div style="font-size:2.5rem; margin-bottom:8px; text-shadow:0 2px 10px rgba(0,0,0,0.5);">&#x1F512;</div>
+                <div style="background:linear-gradient(45deg, #FFD700, #FDB931); color:#000; font-weight:900; padding:6px 12px; border-radius:8px; font-size:0.85rem; letter-spacing:1px; box-shadow:0 4px 15px rgba(255,215,0,0.4);">PRO</div>
+            </div>
+            <div style="filter: blur(6px); pointer-events:none; opacity:0.7;">
+                <div class="cover-wrap">
+                    <img src="${book.cover}" alt="${book.title}" loading="lazy" style="width:100%; height:200px; object-fit:cover;">
+                </div>
+                <div style="padding:10px;">
+                    <div class="book-title" style="font-size:0.9rem; font-weight:700;">${book.title}</div>
+                    <div class="book-auth" style="font-size:0.75rem; color:var(--muted);">${book.author}</div>
+                </div>
+            </div>
+        </div>`;
+    }
     return `
     <div class="book-card" id="bcard-${book.id}">
         <button class="fav-btn ${favorites.has(book.id)?'active':''}" onclick="toggleFav(event,${book.id})" title="Sevimlilarga qo'shish">&#x2665;</button>
@@ -1638,6 +1795,15 @@ function bookCardHTML(book) {
 }
 
 /* &#x2500;&#x2500; HOME TRENDING &#x2500;&#x2500; */
+
+function renderProBooks() {
+    const proBooks = BOOKS.filter(b => b.isPro);
+    const grid = document.getElementById('proGrid');
+    if(grid) {
+        grid.innerHTML = proBooks.map(bookCardHTML).join('');
+    }
+}
+
 function renderTrending() {
     const trend = BOOKS.filter(b => b.trend).slice(0, 3);
     document.getElementById('trendingGrid').innerHTML = trend.map(bookCardHTML).join('');
@@ -1745,7 +1911,13 @@ function renderFaq() {
 function openBookModal(id) {
     activeBook = BOOKS.find(b => b.id === id);
     if (!activeBook) return;
+    
     document.getElementById('modalTitle').textContent = activeBook.title;
+    let tgLink = document.getElementById('modalTgLink');
+    if(tgLink) {
+        tgLink.href = activeBook.tgUrl || 'https://t.me/kutubxona_bot';
+    }
+
     document.getElementById('modalAuthor').textContent = activeBook.author + ' &#x2022; ' + activeBook.category;
     document.getElementById('modalDesc').textContent = activeBook.desc;
     document.getElementById('modalCover').src = activeBook.cover;
@@ -1757,7 +1929,119 @@ function openBookModal(id) {
 }
 function closeBookModal() { document.getElementById('bookModal').classList.remove('open'); }
 function setModalRating(r) { document.querySelectorAll('.modal-stars .star').forEach((s,i) => s.classList.toggle('active', i < r)); showToast(`<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg> ${r} yulduz berildi!`); }
-function readOnline() { if(activeBook) showToast(`<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -0.125em;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg> "${activeBook.title}" PDF viewerda ochilmoqda...`); }
+
+/* PDF READER LOGIC */
+let pdfDoc = null;
+let pageNum = 1;
+let pageRendering = false;
+let pageNumPending = null;
+let scale = 1.0;
+let canvas = null;
+let ctx = null;
+
+function renderPage(num) {
+    pageRendering = true;
+    pdfDoc.getPage(num).then(function(page) {
+        if(!canvas) {
+            canvas = document.getElementById('pdfCanvas');
+            ctx = canvas.getContext('2d');
+        }
+        
+        // Adjust scale based on screen width if on mobile
+        let currentScale = scale;
+        if(window.innerWidth < 600 && scale === 1.0) {
+            currentScale = (window.innerWidth - 40) / page.getViewport({scale: 1.0}).width;
+        }
+
+        var viewport = page.getViewport({scale: currentScale});
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        var renderContext = {
+            canvasContext: ctx,
+            viewport: viewport
+        };
+        var renderTask = page.render(renderContext);
+
+        renderTask.promise.then(function() {
+            pageRendering = false;
+            if (pageNumPending !== null) {
+                renderPage(pageNumPending);
+                pageNumPending = null;
+            }
+        });
+    });
+
+    document.getElementById('pageCount').textContent = num + ' / ' + pdfDoc.numPages;
+}
+
+function queueRenderPage(num) {
+    if (pageRendering) {
+        pageNumPending = num;
+    } else {
+        renderPage(num);
+    }
+}
+
+function prevPage() {
+    if (pageNum <= 1) return;
+    pageNum--;
+    queueRenderPage(pageNum);
+}
+
+function nextPage() {
+    if (pageNum >= pdfDoc.numPages) return;
+    pageNum++;
+    queueRenderPage(pageNum);
+}
+
+function zoomIn() {
+    scale += 0.2;
+    queueRenderPage(pageNum);
+}
+
+function zoomOut() {
+    if(scale <= 0.4) return;
+    scale -= 0.2;
+    queueRenderPage(pageNum);
+}
+
+function closeReader() {
+    document.getElementById('page-reader').classList.remove('active');
+    // Go back to where they were, or just hide reader to reveal underlying page
+}
+
+function readOnline() {
+    if(!activeBook) return;
+    
+    // Check if pdfUrl exists
+    let url = activeBook.pdfUrl;
+    if(!url) {
+        showToast("Kechirasiz, ushbu kitobning PDF varianti hozircha yuklanmagan.");
+        return;
+    }
+    
+    closeBookModal();
+    document.getElementById('page-reader').classList.add('active');
+    document.getElementById('readerTitle').textContent = activeBook.title;
+    
+    // reset
+    scale = 1.0;
+    pageNum = 1;
+    document.getElementById('pageCount').textContent = "...";
+    
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    
+    pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+        pdfDoc = pdfDoc_;
+        renderPage(pageNum);
+    }).catch(err => {
+        showToast("PDF yuklashda xatolik: " + err.message);
+        closeReader();
+    });
+}
+" PDF viewerda ochilmoqda...`); }
 function addFavorite() {
     if (!activeBook) return;
     if (favorites.has(activeBook.id)) { favorites.delete(activeBook.id); showToast('<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-0.125em"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/><line x1="12" y1="14" x2="12" y2="10"/></svg>&#x2665; Sevimlilardan olib tashlandi'); }
@@ -1880,6 +2164,146 @@ function closeTgPopup() {
 }
 
 /* &#x2500;&#x2500; INIT &#x2500;&#x2500; */
+
+
+/* --- ADMIN & SETTINGS --- */
+function adminLoginPrompt() {
+    if(localStorage.getItem('isAdmin') === 'true') {
+        if(confirm("Admindan chiqishni xohlaysizmi?")) {
+            localStorage.removeItem('isAdmin');
+            location.reload();
+        }
+        return;
+    }
+    const pwd = prompt("Admin parolini kiriting:");
+    if(pwd === 'admin123') {
+        localStorage.setItem('isAdmin', 'true');
+        location.reload();
+    } else if(pwd !== null) {
+        alert("Parol xato!");
+    }
+}
+
+function openSettingsModal() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
+    document.getElementById('inpBannerActive').checked = settings.bannerActive;
+    document.getElementById('inpBannerText').value = settings.bannerText;
+    document.getElementById('inpBannerLink').value = settings.bannerLink;
+    document.getElementById('inpProLink').value = settings.proLink;
+    
+    document.getElementById('settingsModal').classList.add('active');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('active');
+}
+
+function saveSiteSettings() {
+    const settings = {
+        bannerActive: document.getElementById('inpBannerActive').checked,
+        bannerText: document.getElementById('inpBannerText').value,
+        bannerLink: document.getElementById('inpBannerLink').value,
+        proLink: document.getElementById('inpProLink').value
+    };
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    closeSettingsModal();
+    showToast("Sozlamalar saqlandi!");
+    applySiteSettings();
+}
+
+function applySiteSettings() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
+    const banner = document.getElementById('siteBanner');
+    const bannerText = document.getElementById('siteBannerText');
+    if(settings.bannerActive && settings.bannerText) {
+        banner.style.display = 'block';
+        bannerText.textContent = settings.bannerText;
+    } else {
+        banner.style.display = 'none';
+    }
+}
+
+function onBannerClick() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    if(settings.bannerLink) {
+        window.open(settings.bannerLink, '_blank');
+    }
+}
+
+function openProModal() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    const proLink = settings.proLink || 'https://t.me/kutubxona_bot';
+    document.getElementById('proModalLink').href = proLink;
+    document.getElementById('proModal').classList.add('active');
+}
+
+function closeProModal() {
+    document.getElementById('proModal').classList.remove('active');
+}
+
+/* ADD BOOK LOGIC */
+function openAddBookModal() {
+    document.getElementById('addBookModal').classList.add('active');
+}
+function closeAddBookModal() {
+    document.getElementById('addBookModal').classList.remove('active');
+}
+function submitAddBook() {
+    const title = document.getElementById('inpTitle').value;
+    const author = document.getElementById('inpAuthor').value;
+    const category = document.getElementById('inpCategory').value;
+    const cover = document.getElementById('inpCover').value;
+    const pdfUrl = document.getElementById('inpPdf').value;
+    const tgUrl = document.getElementById('inpTg').value;
+    
+    if(!title || !author || !cover) {
+        showToast("Iltimos, ism, muallif va rasm linkini kiriting!");
+        return;
+    }
+    
+    const newBook = {
+        id: Date.now(),
+        title: title,
+        author: author,
+        category: category || "Boshqa",
+        isPro: document.getElementById('inpIsPro') ? document.getElementById('inpIsPro').checked : false,
+        rating: 5.0,
+        trend: true,
+        isNew: true,
+        cover: cover,
+        desc: "Foydalanuvchi tomonidan yuklangan kitob.",
+        pdfUrl: pdfUrl,
+        tgUrl: tgUrl
+    };
+    
+    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
+    customBooks.push(newBook);
+    localStorage.setItem('customBooks', JSON.stringify(customBooks));
+    
+    BOOKS.push(newBook); // add to current array
+    
+    // clear inputs
+    document.getElementById('inpTitle').value = '';
+    document.getElementById('inpAuthor').value = '';
+    document.getElementById('inpCategory').value = '';
+    document.getElementById('inpCover').value = '';
+    document.getElementById('inpPdf').value = '';
+    document.getElementById('inpTg').value = '';
+    
+    closeAddBookModal();
+    showToast("Kitob muvaffaqiyatli qo'shildi!");
+    
+    // Re-render
+    if(typeof renderTrending === 'function') renderTrending();
+    if(typeof renderBooks === 'function') renderBooks();
+}
+
+// Inject custom books on load
+(function initCustomBooks() {
+    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
+    customBooks.forEach(b => BOOKS.push(b));
+})();
+
 window.addEventListener('load', () => {
     const t = localStorage.getItem('theme') || 'dark';
     document.documentElement.setAttribute('data-theme', t);
@@ -1891,6 +2315,7 @@ window.addEventListener('load', () => {
     animCount('cnt3', 8200, '+');
     animCount('cnt4', 25000, '+');
     renderTrending();
+    renderProBooks();
     resizeCanvas();
     drawParticles();
     
@@ -1909,7 +2334,147 @@ window.addEventListener('load', () => {
 
     <script>
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
+        
+
+/* --- ADMIN & SETTINGS --- */
+function adminLoginPrompt() {
+    if(localStorage.getItem('isAdmin') === 'true') {
+        if(confirm("Admindan chiqishni xohlaysizmi?")) {
+            localStorage.removeItem('isAdmin');
+            location.reload();
+        }
+        return;
+    }
+    const pwd = prompt("Admin parolini kiriting:");
+    if(pwd === 'admin123') {
+        localStorage.setItem('isAdmin', 'true');
+        location.reload();
+    } else if(pwd !== null) {
+        alert("Parol xato!");
+    }
+}
+
+function openSettingsModal() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
+    document.getElementById('inpBannerActive').checked = settings.bannerActive;
+    document.getElementById('inpBannerText').value = settings.bannerText;
+    document.getElementById('inpBannerLink').value = settings.bannerLink;
+    document.getElementById('inpProLink').value = settings.proLink;
+    
+    document.getElementById('settingsModal').classList.add('active');
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').classList.remove('active');
+}
+
+function saveSiteSettings() {
+    const settings = {
+        bannerActive: document.getElementById('inpBannerActive').checked,
+        bannerText: document.getElementById('inpBannerText').value,
+        bannerLink: document.getElementById('inpBannerLink').value,
+        proLink: document.getElementById('inpProLink').value
+    };
+    localStorage.setItem('siteSettings', JSON.stringify(settings));
+    closeSettingsModal();
+    showToast("Sozlamalar saqlandi!");
+    applySiteSettings();
+}
+
+function applySiteSettings() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
+    const banner = document.getElementById('siteBanner');
+    const bannerText = document.getElementById('siteBannerText');
+    if(settings.bannerActive && settings.bannerText) {
+        banner.style.display = 'block';
+        bannerText.textContent = settings.bannerText;
+    } else {
+        banner.style.display = 'none';
+    }
+}
+
+function onBannerClick() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    if(settings.bannerLink) {
+        window.open(settings.bannerLink, '_blank');
+    }
+}
+
+function openProModal() {
+    const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
+    const proLink = settings.proLink || 'https://t.me/kutubxona_bot';
+    document.getElementById('proModalLink').href = proLink;
+    document.getElementById('proModal').classList.add('active');
+}
+
+function closeProModal() {
+    document.getElementById('proModal').classList.remove('active');
+}
+
+/* ADD BOOK LOGIC */
+function openAddBookModal() {
+    document.getElementById('addBookModal').classList.add('active');
+}
+function closeAddBookModal() {
+    document.getElementById('addBookModal').classList.remove('active');
+}
+function submitAddBook() {
+    const title = document.getElementById('inpTitle').value;
+    const author = document.getElementById('inpAuthor').value;
+    const category = document.getElementById('inpCategory').value;
+    const cover = document.getElementById('inpCover').value;
+    const pdfUrl = document.getElementById('inpPdf').value;
+    const tgUrl = document.getElementById('inpTg').value;
+    
+    if(!title || !author || !cover) {
+        showToast("Iltimos, ism, muallif va rasm linkini kiriting!");
+        return;
+    }
+    
+    const newBook = {
+        id: Date.now(),
+        title: title,
+        author: author,
+        category: category || "Boshqa",
+        isPro: document.getElementById('inpIsPro') ? document.getElementById('inpIsPro').checked : false,
+        rating: 5.0,
+        trend: true,
+        isNew: true,
+        cover: cover,
+        desc: "Foydalanuvchi tomonidan yuklangan kitob.",
+        pdfUrl: pdfUrl,
+        tgUrl: tgUrl
+    };
+    
+    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
+    customBooks.push(newBook);
+    localStorage.setItem('customBooks', JSON.stringify(customBooks));
+    
+    BOOKS.push(newBook); // add to current array
+    
+    // clear inputs
+    document.getElementById('inpTitle').value = '';
+    document.getElementById('inpAuthor').value = '';
+    document.getElementById('inpCategory').value = '';
+    document.getElementById('inpCover').value = '';
+    document.getElementById('inpPdf').value = '';
+    document.getElementById('inpTg').value = '';
+    
+    closeAddBookModal();
+    showToast("Kitob muvaffaqiyatli qo'shildi!");
+    
+    // Re-render
+    if(typeof renderTrending === 'function') renderTrending();
+    if(typeof renderBooks === 'function') renderBooks();
+}
+
+// Inject custom books on load
+(function initCustomBooks() {
+    let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
+    customBooks.forEach(b => BOOKS.push(b));
+})();
+
+window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then(reg => {
             console.log('SW registered!', reg);
           }).catch(err => console.log('SW registration failed', err));
