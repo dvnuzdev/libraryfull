@@ -444,7 +444,8 @@ img{display:block;}
    MODAL
 &#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500;&#x2500; */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(14px);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .35s;}
-.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-overlay.open, .modal-overlay.active{opacity:1;pointer-events:all;}
+.modal-overlay.open .modal, .modal-overlay.active .modal{transform:none;}
 .modal{background:var(--bg);border:1px solid var(--border);border-radius:32px;padding:36px;width:100%;max-width:760px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 40px 80px rgba(0,0,0,.5);display:grid;grid-template-columns:230px 1fr;gap:28px;transform:translateY(30px) scale(.96);transition:transform .4s cubic-bezier(.175,.885,.32,1.275);}
 .modal-overlay.open .modal{transform:none;}
 .modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;background:rgba(255,255,255,.07);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.15rem;color:var(--text);transition:.2s;}
@@ -2508,16 +2509,15 @@ function adminLoginPrompt() {
 
 function openSettingsModal() {
     const settings = JSON.parse(localStorage.getItem('siteSettings') || '{"bannerActive":false, "bannerText":"", "bannerLink":"", "proLink":""}');
-    document.getElementById('inpBannerActive').checked = settings.bannerActive;
-    document.getElementById('inpBannerText').value = settings.bannerText;
-    document.getElementById('inpBannerLink').value = settings.bannerLink;
-    document.getElementById('inpProLink').value = settings.proLink;
-    
-    document.getElementById('settingsModal').classList.add('active');
+    const actEl = document.getElementById('inpBannerActive'); if(actEl) actEl.checked = settings.bannerActive;
+    const txtEl = document.getElementById('inpBannerText'); if(txtEl) txtEl.value = settings.bannerText || '';
+    const lnkEl = document.getElementById('inpBannerLink'); if(lnkEl) lnkEl.value = settings.bannerLink || '';
+    const proEl = document.getElementById('inpProLink'); if(proEl) proEl.value = settings.proLink || '';
+    const m = document.getElementById('settingsModal'); if(m) { m.classList.add('open'); m.classList.add('active'); }
 }
 
 function closeSettingsModal() {
-    document.getElementById('settingsModal').classList.remove('active');
+    const m = document.getElementById('settingsModal'); if(m) { m.classList.remove('open'); m.classList.remove('active'); }
 }
 
 function saveSiteSettings() {
@@ -2555,31 +2555,31 @@ function onBannerClick() {
 function openProModal() {
     const settings = JSON.parse(localStorage.getItem('siteSettings') || '{}');
     const proLink = settings.proLink || 'https://t.me/kutubxona_bot';
-    document.getElementById('proModalLink').href = proLink;
-    document.getElementById('proModal').classList.add('active');
+    const lnk = document.getElementById('proModalLink'); if(lnk) lnk.href = proLink;
+    const m = document.getElementById('proModal'); if(m) { m.classList.add('open'); m.classList.add('active'); }
 }
 
 function closeProModal() {
-    document.getElementById('proModal').classList.remove('active');
+    const m = document.getElementById('proModal'); if(m) { m.classList.remove('open'); m.classList.remove('active'); }
 }
 
 /* ADD BOOK LOGIC */
 function openAddBookModal() {
-    document.getElementById('addBookModal').classList.add('active');
+    const m = document.getElementById('addBookModal'); if(m) { m.classList.add('open'); m.classList.add('active'); }
 }
 function closeAddBookModal() {
-    document.getElementById('addBookModal').classList.remove('active');
+    const m = document.getElementById('addBookModal'); if(m) { m.classList.remove('open'); m.classList.remove('active'); }
 }
 function submitAddBook() {
-    const title = document.getElementById('inpTitle').value;
-    const author = document.getElementById('inpAuthor').value;
-    const category = document.getElementById('inpCategory').value;
-    const cover = document.getElementById('inpCover').value;
-    const pdfUrl = document.getElementById('inpPdf').value;
-    const tgUrl = document.getElementById('inpTg').value;
+    const title = document.getElementById('inpTitle').value.trim();
+    const author = document.getElementById('inpAuthor').value.trim();
+    const category = document.getElementById('inpCategory').value.trim();
+    const cover = document.getElementById('inpCover').value.trim();
+    const pdfUrl = document.getElementById('inpPdf').value.trim();
+    const tgUrl = document.getElementById('inpTg').value.trim();
     
     if(!title || !author || !cover) {
-        showToast("Iltimos, ism, muallif va rasm linkini kiriting!");
+        showToast("Iltimos, nom, muallif va muqova (rasm) linkini kiriting!");
         return;
     }
     
@@ -2593,16 +2593,16 @@ function submitAddBook() {
         trend: true,
         isNew: true,
         cover: cover,
-        desc: "Foydalanuvchi tomonidan yuklangan kitob.",
+        desc: "Yangi qo'shilgan kitob.",
         pdfUrl: pdfUrl,
         tgUrl: tgUrl
     };
     
     let customBooks = JSON.parse(localStorage.getItem('customBooks') || '[]');
-    customBooks.push(newBook);
+    customBooks.unshift(newBook);
     localStorage.setItem('customBooks', JSON.stringify(customBooks));
     
-    BOOKS.push(newBook); // add to current array
+    BOOKS.unshift(newBook);
     
     // clear inputs
     document.getElementById('inpTitle').value = '';
@@ -2611,13 +2611,15 @@ function submitAddBook() {
     document.getElementById('inpCover').value = '';
     document.getElementById('inpPdf').value = '';
     document.getElementById('inpTg').value = '';
+    if(document.getElementById('inpIsPro')) document.getElementById('inpIsPro').checked = false;
     
     closeAddBookModal();
     showToast("Kitob muvaffaqiyatli qo'shildi!");
     
-    // Re-render
+    // Re-render all grids
     if(typeof renderTrending === 'function') renderTrending();
-    if(typeof renderBooks === 'function') renderBooks();
+    if(typeof renderCatalog === 'function') renderCatalog();
+    if(typeof renderProBooks === 'function') renderProBooks();
 }
 
 // Inject custom books on load
